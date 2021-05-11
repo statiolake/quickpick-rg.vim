@@ -1,8 +1,15 @@
-if !exists('g:quickpick_rg_command')
-    let g:quickpick_rg_command = 'rg --vimgrep "%s"'
-endif
-
 let g:quickpick_rg = 1
+
+function! s:default_option(name, value)
+    let g:[a:name] = get(g:, a:name, a:value)
+endfunction
+
+" Options
+call s:default_option('quickpick#pickers#rg#command', 'rg --vimgrep %s')
+call s:default_option('quickpick#pickers#rg#item_limit', 100)
+call s:default_option('quickpick#pickers#rg#use_quickfix', 1)
+call s:default_option('quickpick#pickers#rg#quickfix_auto_open', 1)
+" Options END
 
 let s:last_input = ''
 
@@ -18,7 +25,8 @@ function! s:find_occurrences(query) abort
     if empty(a:query)
         return []
     endif
-    let command = printf(g:quickpick_rg_command, shellescape(a:query))
+    let command = printf(
+        \ g:quickpick#pickers#rg#command, shellescape(a:query))
     return uniq(sort(split(system(command), '\n')))
 endfunction
 
@@ -28,7 +36,7 @@ function! s:on_change(data, name) abort
     " quickpick.vim becomes too slow for too many items. Take the first few
     " items when items are too many. The maximum number of items can be
     " configured by global variable g:quickpick#pickers#rg#item_limit.
-    let item_limit = get(g:, 'quickpick#pickers#rg#item_limit', 100)
+    let item_limit = g:quickpick#pickers#rg#item_limit
     call quickpick#items(s:find_occurrences(a:data['input'])[0:item_limit])
 endfunction
 
@@ -55,11 +63,13 @@ function! s:on_accept(data, name) abort
     if len(a:data['items']) > 0
         let occurrences = s:find_occurrences(s:last_input)
         let idx = index(occurrences, a:data['items'][0])
-        if get(g:, 'quickpick#pickers#rg#use_quickfix', 1)
+        if g:quickpick#pickers#rg#use_quickfix
             call setqflist(map(
                 \ copy(occurrences),
                 \ 's:convert_to_qfentry(v:val)'))
-            copen
+            if g:quickpick#pickers#rg#quickfix_auto_open
+                copen
+            endif
             execute 'cc ' . string(idx + 1)
         else
             let entry = s:convert_to_qfentry(a:data['items'][0])
