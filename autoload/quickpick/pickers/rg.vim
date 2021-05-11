@@ -4,16 +4,13 @@ endif
 
 let g:quickpick_rg = 1
 
-let s:prev_input = ''
 let s:last_input = ''
 
 function! quickpick#pickers#rg#open() abort
-    let s:last_input = s:prev_input
+    let s:last_input = ''
     call quickpick#open({
         \   'on_change': function('s:on_change'),
         \   'on_accept': function('s:on_accept'),
-        \   'input': s:prev_input,
-        \   'items': s:find_occurrences(s:prev_input),
         \ })
 endfunction
 
@@ -26,7 +23,6 @@ function! s:find_occurrences(query) abort
 endfunction
 
 function! s:on_change(data, name) abort
-    let s:prev_input = a:data['input']
     let s:last_input = a:data['input']
 
     " quickpick.vim becomes too slow for too many items. Take the first few
