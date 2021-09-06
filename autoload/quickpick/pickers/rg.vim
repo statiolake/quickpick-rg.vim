@@ -1,6 +1,6 @@
 let g:quickpick_rg = 1
 
-function! s:default_option(name, value)
+function! s:default_option(name, value) abort
     let g:[a:name] = get(g:, a:name, a:value)
 endfunction
 
@@ -54,7 +54,7 @@ function! s:convert_to_qfentry(line) abort
             \     'text': text,
             \ }
     else
-        echoerr "cannot parse selected entry: " . a:line
+        echoerr 'cannot parse selected entry: ' . a:line
     endif
 endfunction
 
