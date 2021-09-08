@@ -20,12 +20,16 @@ function! quickpick#pickers#rg#open() abort
         \ })
 endfunction
 
+function! s:escape(query) abort
+    return '"' .. substitute(a:query, '"', '\\"', 'g') .. '"'
+endfunction
+
 function! s:find_occurrences(query, callback) abort
     if empty(a:query)
         return []
     endif
     let command = printf(
-        \ g:quickpick#pickers#rg#command, shellescape(a:query))
+        \ g:quickpick#pickers#rg#command, s:escape(a:query))
 
     if exists('s:last_job_id')
         call s:stop(s:last_job_id)
