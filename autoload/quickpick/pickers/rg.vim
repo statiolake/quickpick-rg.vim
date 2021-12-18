@@ -14,9 +14,9 @@ call s:default_option('quickpick#pickers#rg#quickfix_auto_open', 1)
 function! quickpick#pickers#rg#open() abort
     let s:last_result = []
     call quickpick#open({
-        \   'on_change': function('s:on_change'),
-        \   'on_accept': function('s:on_accept'),
-        \   'filter': 0,
+        \      'on_change': function('s:on_change'),
+        \      'on_accept': function('s:on_accept'),
+        \      'filter': 0,
         \ })
 endfunction
 
